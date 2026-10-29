@@ -1,5 +1,33 @@
 # 클라우드 환경 사용법
 
+## 웹 앱 구현 후 현재 작업 방법
+
+2026-10-29 사용자 요청으로 ‘취향 싱크’ 정적 웹 앱을 구현했다. 아래 초기 기록의 ‘문서만 있는 상태’는 과거 기록이다. 현재 실행은 이 절을 따른다.
+
+기존 `/workspace/viral`을 사용한다. 사용자가 명시적으로 요청하지 않는 한 worktree를 만들지 않는다. Node.js 22 이상이 필요하며 현재 머신과 CI는 Node.js 24를 사용한다.
+
+```sh
+cd /workspace/viral
+npm ci --cache /workspace/.npm-cache
+npm test
+npm run build
+npm start
+```
+
+기본 포트는 3000이며 `PORT`로 바꿀 수 있다. `dist/`의 파일을 제공한다. 기본 페이지와 `app.js`의 200 응답을 확인하고 브라우저에서 실제 문항 완료와 결과를 검증한다.
+
+브라우저 검증은 빌드 후 `npm run test:e2e`를 실행한다. 포트 3100의 테스트 서버를 자동 시작·정리한다. 시스템 Chromium이 없다면 `npx playwright install chromium`을 먼저 실행한다. `/usr/bin/chromium`은 자동 사용하며 다른 경로는 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`로 지정한다.
+
+현재 인스턴스에서 단위 테스트 5개 및 모바일·데스크톱 Chromium 기능 테스트 16개를 통과했다. 두 사람의 응답과 결과 회신, 이전 질문, 공유 취소, 복사 거절, 깨진 링크, 로컬 저장소 거절·삭제, 정적 파일 응답을 확인했다. 모바일 검증은 Chromium 에뮬레이션이며 실제 iOS Safari 검증이 아니다. 운영체제 공유 UI와 실제 메시지 발송은 테스트에서 모의 처리했다.
+
+앱의 런타임 API 키·DB·로그인은 필요 없다. `dist/`, `node_modules/`, `test-results/`는 생성물이며 Git에서 제외한다. 살아 있는 개발 서버가 새 클라우드 작업에 유지된다고 가정하지 않는다.
+
+GitHub Pages 설정·상태 확인에 필요한 `api.github.com`과 공개 사이트 확인용 `planndoit.github.io`를 환경 허용 도메인 초안에 추가했다. 현재 인스턴스의 GitHub API 요청은 프록시 403으로 차단되어 있었다. 초안 저장은 현재 네트워크 반영과 다르므로 설정 적용 후 해당 작업을 재시도한다. 인증 값을 출력하거나 우회하지 않는다.
+
+[배포 안내](deployment.ko.md)에 Pages 설정·검증 절차가 있다. 클라우드 환경의 Publish는 스냅샷 게시이며 웹 앱의 공개 배포와 별개다.
+
+## 초기 문서 전용 환경의 확인 기록
+
 확인일: 2026-10-29
 
 ## 현재 준비된 작업
