@@ -14,6 +14,19 @@ async function mockClipboard(page) {
   });
 }
 
+test('root hosting on Vercel keeps copied invitation links at the root', async ({ page }) => {
+  await mockClipboard(page);
+  await page.goto('/');
+  await page.getByRole('button', { name: '내 취향 알아보기' }).click();
+  await finishQuiz(page, '010101');
+  await page.getByRole('button', { name: '링크 복사하기', exact: true }).click();
+  const link = (await page.evaluate(() => window.copiedText)).split('\n').at(-1);
+  expect(new URL(link).pathname).toBe('/');
+  expect(new URL(link).hash).toBe('#v1.i.010101');
+  await page.goto(link);
+  await expect(page.getByRole('button', { name: '친구와 취향 비교하기' })).toBeVisible();
+});
+
 test('two friends complete, copy invitations, compare and return the same result', async ({ page, browser }, testInfo) => {
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));

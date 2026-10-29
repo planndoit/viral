@@ -1,0 +1,10 @@
+.git
+.github
+docs
+tests
+test-results
+playwright-report
+node_modules
+dist
+playwright.config.js
+README.md

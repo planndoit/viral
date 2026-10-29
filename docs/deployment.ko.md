@@ -1,45 +1,47 @@
-# 웹 앱 배포 안내
+# Vercel 배포 안내
 
-## 배포 대상
+사용자 요청에 따라 웹 앱 배포 대상을 Vercel로 변경했다. GitHub Actions는 테스트 CI만 실행한다. 클라우드 개발 환경의 Publish와 공개 웹 배포는 별개다.
 
-‘취향 싱크’는 정적 웹 앱이다. `dist/`의 HTML·JavaScript·CSS·공유 이미지·아이콘만 게시한다. 소스·테스트·문서·의존성을 게시하지 않는다. GitHub Pages의 프로젝트 하위 경로 `/viral/`에서도 상대 경로로 동작한다. 런타임 서버나 별도 비밀값이 필요하지 않다.
+## 프로젝트 설정
 
-## 자동 배포
+저장소 `planndoit/viral`을 Vercel에 가져오면 루트의 `vercel.json`을 사용한다.
 
-`.github/workflows/pages.yml`이 `main` 푸시와 수동 실행을 처리한다.
+- Framework preset: Other
+- Install command: `npm ci`
+- Build command: `npm test && npm run build`
+- Output directory: `dist`
+- Root directory: 저장소 루트
+- 런타임 API 키·DB·로그인: 불필요
 
-1. lockfile로 개발 의존성을 설치한다.
-2. 단위 테스트를 실행하고 정적 파일을 빌드한다.
-3. Chromium을 설치하고 모바일·데스크톱 기능 테스트를 실행한다.
-4. 통과한 `dist/`를 Pages artifact로 올려 배포한다.
+공유 이미지 메타데이터는 빌드 시 Vercel이 제공하는 현재 배포 호스트를 사용한다. production 빌드에서는 `VERCEL_PROJECT_PRODUCTION_URL`이 있으면 우선 사용한다. 초대와 결과 링크는 실행 중인 페이지 주소를 사용하므로 Pages의 `/viral/`뿐 아니라 Vercel의 루트 경로에서도 동작한다.
 
-GitHub 저장소 **Settings → Pages → Build and deployment → Source**가 **GitHub Actions**여야 한다. 저장소 설정 권한과 계정 플랜에 따라 Pages 사용 가능 여부가 달라질 수 있으며 저장소 공개 여부를 임의로 바꾸지 않는다.
+## CLI 배포
 
-## API로 설정할 경우
-
-먼저 기존 사이트를 읽는다. 조회 실패가 곧 미설정을 뜻하지 않는다. 404로 미설정이 확인된 경우에만 생성하고, 인증·정책·권한 오류는 원인별로 해결한다.
-
-```sh
-gh api repos/planndoit/viral/pages
-# 사이트가 없다는 404를 확인했고 설정 권한이 있을 때
-gh api --method POST repos/planndoit/viral/pages -f build_type=workflow
-# 이미 다른 빌드 방식으로 설정된 사이트라면
-gh api --method PUT repos/planndoit/viral/pages -f build_type=workflow
-```
-
-이 문서는 명령 실행 성공 기록이 아니다. 실제 설정 결과를 확인해야 한다. Pages 생성 API는 저장소 관리자 권한이 필요할 수 있다. Git 읽기·푸시 성공이 Pages 설정 권한을 보장하지 않는다. 자동 배포 워크플로의 기본 GITHUB_TOKEN으로 Pages 최초 활성화를 우회하지 않는다.
-
-## 배포 검증
+Vercel CLI 65.7.0을 확인했다. 이 클라우드에서는 기본 홈 디렉터리를 쓸 수 없어 전용 글로벌 설정 경로를 사용한다.
 
 ```sh
-gh run list --repo planndoit/viral --workflow pages.yml --limit 3
-gh api repos/planndoit/viral/pages --jq '{html_url,status,build_type}'
+cd /workspace/viral
+npm exec --yes --cache /workspace/.npm-cache --package vercel@65.7.0 -- vercel deploy --prod --yes --global-config /workspace/.vercel-cli --token "$VERCEL_TOKEN"
 ```
 
-API가 반환한 URL과 해당 커밋의 워크플로 성공을 확인한 뒤, 공개 페이지에 실제로 접속하여 6문항 완료·초대 링크·친구 비교·결과 회신을 재검증한다. 단순히 파일을 푸시하거나 로컬 테스트를 통과한 것을 공개 배포 성공으로 취급하지 않는다.
+이미 연결된 프로젝트가 있으면 그대로 사용한다. 새 프로젝트나 팀 선택이 필요한 경우 사용자 소유의 대상인지 확인하고 선택한다. `.vercel/`의 연결 정보·배포 상태·인증 관련 파일은 Git에서 제외한다. 토큰 값이나 임시 배포의 claim 링크를 로그·Git·문서에 넣지 않는다.
 
-기본 주소는 `https://planndoit.github.io/viral/`다. 이는 저장소 이름으로 정해지는 예상 주소이며, **워크플로 성공과 공개 응답을 확인하기 전에는 사용 가능한 테스트 URL로 보장하지 않는다.**
+CLI의 로그인 없는 `--temporary` 옵션도 확인하고 시도했으나 이 실행에서는 ‘Temporary deployments aren't available for this attempt’로 거절됐으며, 이어진 인증 요청은 네트워크 접근에 실패했다. 이것만으로 임시 배포가 모든 환경에서 불가능하다고 결론 내리지 않는다.
 
-## 네트워크 제약
+## 현재 필요한 접근
 
-현재 클라우드에서 GitHub API 요청은 네트워크 프록시 403으로 제한되어 있었다. `api.github.com` 및 `planndoit.github.io`를 환경 설정 허용 도메인 초안에 추가했다. 실제 반영 전에는 Pages 설정·작업 상태·공개 URL 확인이 막힐 수 있다. 설정 적용 이후 이어서 검증할 수 있다.
+현재 머신에는 Vercel 로그인 정보나 `VERCEL_TOKEN` 바인딩이 없다. 환경 설정에 Vercel 토큰을 **보안 값으로** 입력한다. 채팅이나 저장소 파일에 토큰을 넣지 않는다. 프록시 방식 비밀값의 대상은 `api.vercel.com`이다.
+
+`api.vercel.com`과 `vercel.com`의 HTTP 요청은 현재 프록시에서 403으로 차단되었다. 기존 네트워크 규칙을 보존하고 이 도메인 및 생성될 테스트 주소의 `*.vercel.app` 허용을 환경 초안에 추가했다. 초안 저장과 현재 네트워크 반영은 다르므로 설정 적용 후 배포를 재시도해야 한다.
+
+## 배포 완료 확인
+
+실제 배포가 READY 상태에 도달하면 반환된 URL을 사용한다. 예상 프로젝트 이름으로 URL을 만들어 배포 완료라고 안내하지 않는다. 공개 접근 및 인증 보호 여부를 확인하고 다음 흐름을 테스트한다.
+
+1. 모바일 크기에서 첫 화면과 6문항을 완료한다.
+2. 초대 링크를 새 브라우저 세션에서 열어 다른 답변을 고른다.
+3. 일치 수와 항목별 결과가 맞는지 확인한다.
+4. 결과 링크를 원래 세션으로 회신하고 새로고침해도 결과가 유지되는지 확인한다.
+5. 실제 메신저의 공유 미리보기도 확인한다.
+
+로컬 테스트나 Git 푸시만으로 공개 배포 성공을 주장하지 않는다. 이전 GitHub Pages 시도는 사이트 미활성화 404로 실패했으며 현재 배포 수단은 Vercel이다.

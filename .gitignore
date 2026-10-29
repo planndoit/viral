@@ -1,5 +1,6 @@
 dist/
 node_modules/
+.vercel/
 .playwright/
 playwright-report/
 test-results/

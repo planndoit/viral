@@ -18,13 +18,13 @@ npm start
 
 브라우저 검증은 빌드 후 `npm run test:e2e`를 실행한다. 포트 3100의 테스트 서버를 자동 시작·정리한다. 시스템 Chromium이 없다면 `npx playwright install chromium`을 먼저 실행한다. `/usr/bin/chromium`은 자동 사용하며 다른 경로는 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`로 지정한다.
 
-현재 인스턴스에서 단위 테스트 5개 및 모바일·데스크톱 Chromium 기능 테스트 16개를 통과했다. 두 사람의 응답과 결과 회신, 이전 질문, 공유 취소, 복사 거절, 깨진 링크, 로컬 저장소 거절·삭제, 정적 파일 응답을 확인했다. 모바일 검증은 Chromium 에뮬레이션이며 실제 iOS Safari 검증이 아니다. 운영체제 공유 UI와 실제 메시지 발송은 테스트에서 모의 처리했다.
+현재 인스턴스에서 단위 테스트 6개 및 모바일·데스크톱 Chromium 기능 테스트 18개를 통과했다. 두 사람의 응답과 결과 회신, Vercel용 루트 경로에서의 초대 링크, 빌드 시 공유 이미지 주소, 이전 질문, 공유 취소, 복사 거절, 깨진 링크, 로컬 저장소 거절·삭제, 정적 파일 응답을 확인했다. 모바일 검증은 Chromium 에뮬레이션이며 실제 iOS Safari 검증이 아니다. 운영체제 공유 UI와 실제 메시지 발송은 테스트에서 모의 처리했다.
 
 앱의 런타임 API 키·DB·로그인은 필요 없다. `dist/`, `node_modules/`, `test-results/`는 생성물이며 Git에서 제외한다. 살아 있는 개발 서버가 새 클라우드 작업에 유지된다고 가정하지 않는다.
 
 GitHub Pages 설정·상태 확인에 필요한 `api.github.com`과 공개 사이트 확인용 `planndoit.github.io`를 환경 허용 도메인 초안에 추가했다. 현재 인스턴스의 GitHub API 요청은 프록시 403으로 차단되어 있었다. 초안 저장은 현재 네트워크 반영과 다르므로 설정 적용 후 해당 작업을 재시도한다. 인증 값을 출력하거나 우회하지 않는다.
 
-[배포 안내](deployment.ko.md)에 Pages 설정·검증 절차가 있다. 클라우드 환경의 Publish는 스냅샷 게시이며 웹 앱의 공개 배포와 별개다.
+[배포 안내](deployment.ko.md)에 Vercel 배포·검증 절차가 있다. 이후 사용자 요청으로 배포 대상을 Vercel로 변경했다. `vercel.json`은 정적 빌드 결과 `dist/`를 게시한다. Vercel CLI 65.7.0의 인증 조회는 로그아웃 상태였으며 로그인 없는 `--temporary` 배포 옵션을 확인했다. Vercel 접근용 `api.vercel.com`, `vercel.com`, 테스트 호스트용 `*.vercel.app`도 허용 도메인 초안에 추가했다. 실제 반영 전에는 접근이 제한될 수 있다. 클라우드 환경의 Publish는 스냅샷 게시이며 웹 앱의 공개 배포와 별개다.
 
 ## 초기 문서 전용 환경의 확인 기록
 

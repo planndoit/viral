@@ -23,9 +23,9 @@ npm start
 
 답변은 링크의 fragment(`#` 뒤)에 담기며 암호화하지 않습니다. **링크를 가진 사람은 답변을 볼 수 있습니다.** 이름·연락처·민감한 질문을 사용하지 않으며, 별도 답변 서버·분석·광고 도구는 없습니다. 호스팅 서비스의 일반 접속 기록은 남을 수 있습니다. 결과는 선택 6개의 일치 수이며 성격이나 관계를 진단하지 않습니다.
 
-GitHub Pages 자동 배포 워크플로를 포함합니다. `main` 푸시 시 단위 테스트·빌드·모바일/데스크톱 Chromium 테스트를 통과한 `dist/`만 게시합니다. 저장소 **Settings → Pages → Source: GitHub Actions**가 필요합니다. [배포 안내](docs/deployment.ko.md)를 참고하세요.
+Vercel 배포 설정(`vercel.json`)을 포함합니다. 빌드 명령은 `npm test && npm run build`, 출력 폴더는 `dist`입니다. GitHub의 `main` 푸시·PR에는 별도 CI가 단위 테스트·빌드·모바일/데스크톱 Chromium 테스트를 실행합니다. [배포 안내](docs/deployment.ko.md)를 참고하세요.
 
-기본 배포 주소는 `https://planndoit.github.io/viral/`입니다. 실제 배포 성공 및 외부 접속 검증과 구분해야 하며, 워크플로와 공개 응답을 확인하기 전에는 사용 가능한 URL로 보장하지 않습니다.
+공개 테스트 URL은 Vercel의 실제 배포 결과에서 확인해야 합니다. 이전 GitHub Pages 배포는 사이트 미활성화로 실패했으며, 그 예상 주소를 사용 가능한 URL로 안내하지 않습니다.
 
 ## 먼저 읽기
 
