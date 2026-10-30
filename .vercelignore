@@ -1,7 +1,7 @@
 .git
 .github
 docs
-tests
+tests/*.spec.js
 test-results
 playwright-report
 node_modules

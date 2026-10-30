@@ -25,7 +25,9 @@ npm start
 
 Vercel 배포 설정(`vercel.json`)을 포함합니다. 빌드 명령은 `npm test && npm run build`, 출력 폴더는 `dist`입니다. GitHub의 `main` 푸시·PR에는 별도 CI가 단위 테스트·빌드·모바일/데스크톱 Chromium 테스트를 실행합니다. [배포 안내](docs/deployment.ko.md)를 참고하세요.
 
-공개 테스트 URL은 Vercel의 실제 배포 결과에서 확인해야 합니다. 이전 GitHub Pages 배포는 사이트 미활성화로 실패했으며, 그 예상 주소를 사용 가능한 URL로 안내하지 않습니다.
+**공개 테스트 URL: https://viral-lovat.vercel.app/**
+
+2026-10-30 Vercel READY 상태와 공개 HTTP 응답을 확인했습니다. 현재는 수동 API 배포이며 GitHub 푸시에 따른 Vercel 자동 재배포는 연결하지 않았습니다. 이 클라우드에서 다시 배포하려면 `python3 scripts/deploy-vercel.py`를 사용합니다.
 
 ## 먼저 읽기
 
